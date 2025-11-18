@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { MeetingSetup } from "@/components/MeetingSetup";
 import { SpeakersList } from "@/components/SpeakersList";
 import { TimerView } from "@/components/TimerView";
@@ -89,50 +90,86 @@ const Index = () => {
     setAppState("setup");
   };
 
-  if (appState === "setup") {
-    return <MeetingSetup onStart={handleStartMeeting} />;
-  }
+  const renderContent = () => {
+    if (appState === "setup") {
+      return <MeetingSetup onStart={handleStartMeeting} />;
+    }
 
-  if (appState === "speakers" && meeting) {
-    return (
-      <SpeakersList
-        meetingName={meeting.name}
-        meetingDate={meeting.date}
-        speakers={meeting.speakers}
-        onAddSpeaker={handleAddSpeaker}
-        onEditSpeaker={handleEditSpeaker}
-        onDeleteSpeaker={handleDeleteSpeaker}
-        onStartTiming={handleStartTiming}
-      />
-    );
-  }
+    if (appState === "speakers" && meeting) {
+      return (
+        <SpeakersList
+          meetingName={meeting.name}
+          meetingDate={meeting.date}
+          speakers={meeting.speakers}
+          onAddSpeaker={handleAddSpeaker}
+          onEditSpeaker={handleEditSpeaker}
+          onDeleteSpeaker={handleDeleteSpeaker}
+          onStartTiming={handleStartTiming}
+        />
+      );
+    }
 
-  if (appState === "timing" && meeting) {
-    const currentSpeaker = meeting.speakers[currentSpeakerIndex];
-    return (
-      <TimerView
-        key={currentSpeakerIndex}
-        speaker={currentSpeaker}
-        speakerNumber={currentSpeakerIndex + 1}
-        totalSpeakers={meeting.speakers.length}
-        onBack={handleBackToSpeakers}
-        onSaveAndNext={handleSaveAndNext}
-      />
-    );
-  }
+    if (appState === "timing" && meeting) {
+      const currentSpeaker = meeting.speakers[currentSpeakerIndex];
+      return (
+        <TimerView
+          key={currentSpeakerIndex}
+          speaker={currentSpeaker}
+          speakerNumber={currentSpeakerIndex + 1}
+          totalSpeakers={meeting.speakers.length}
+          onBack={handleBackToSpeakers}
+          onSaveAndNext={handleSaveAndNext}
+        />
+      );
+    }
 
-  if (appState === "report" && meeting) {
-    return (
-      <TimerReport
-        meetingName={meeting.name}
-        meetingDate={meeting.date}
-        speakers={meeting.speakers}
-        onStartNew={handleStartNew}
-      />
-    );
-  }
+    if (appState === "report" && meeting) {
+      return (
+        <TimerReport
+          meetingName={meeting.name}
+          meetingDate={meeting.date}
+          speakers={meeting.speakers}
+          onStartNew={handleStartNew}
+        />
+      );
+    }
 
-  return null;
+    return null;
+  };
+
+  return (
+    <div className="flex min-h-screen flex-col">
+      <header className="border-b bg-card/80 backdrop-blur-sm">
+        <div className="container mx-auto flex items-center justify-between px-4 py-3">
+          <div className="text-sm font-semibold tracking-tight">
+            Toastmasters Timer
+          </div>
+          <Link
+            to="/faq"
+            className="text-sm font-medium text-foreground/70 hover:text-foreground hover:underline"
+          >
+            FAQ
+          </Link>
+        </div>
+      </header>
+
+      <main className="flex-1">
+        {renderContent()}
+      </main>
+
+      <footer className="border-t bg-card/80 backdrop-blur-sm px-4 py-3 text-center text-xs text-muted-foreground">
+        Created by{" "}
+        <a
+          href="https://www.linkedin.com/in/arunprakashmr/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-medium text-primary hover:underline"
+        >
+          Arun Prakash
+        </a>
+      </footer>
+    </div>
+  );
 };
 
 export default Index;
