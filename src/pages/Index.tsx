@@ -111,6 +111,7 @@ const Index = () => {
     const currentSpeaker = meeting.speakers[currentSpeakerIndex];
     return (
       <TimerView
+        key={currentSpeakerIndex}
         speaker={currentSpeaker}
         speakerNumber={currentSpeakerIndex + 1}
         totalSpeakers={meeting.speakers.length}
