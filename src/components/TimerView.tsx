@@ -239,24 +239,15 @@ export const TimerView = ({
         )}
 
         {isPaused && (
-          <>
-            <Button
-              onClick={handleSaveAndNext}
-              className="w-full h-16 text-xl"
-              size="lg"
-            >
-              {speakerNumber === totalSpeakers
-                ? "Generate Report (PDF)"
-                : "Continue"}
-            </Button>
-            <Button
-              onClick={handleStart}
-              variant="outline"
-              className="w-full h-12"
-            >
-              Continue
-            </Button>
-          </>
+          <Button
+            onClick={handleSaveAndNext}
+            className="w-full h-16 text-xl"
+            size="lg"
+          >
+            {speakerNumber === totalSpeakers
+              ? "Generate Report (PDF)"
+              : "Continue"}
+          </Button>
         )}
 
         <Button
