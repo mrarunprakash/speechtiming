@@ -78,15 +78,6 @@ const Index = () => {
     }
   };
 
-  const handleSkipSpeaker = () => {
-    if (!meeting) return;
-
-    if (currentSpeakerIndex < meeting.speakers.length - 1) {
-      setCurrentSpeakerIndex(currentSpeakerIndex + 1);
-    } else {
-      setAppState("report");
-    }
-  };
 
   const handleBackToSpeakers = () => {
     setAppState("speakers");
@@ -125,7 +116,6 @@ const Index = () => {
         totalSpeakers={meeting.speakers.length}
         onBack={handleBackToSpeakers}
         onSaveAndNext={handleSaveAndNext}
-        onSkip={handleSkipSpeaker}
       />
     );
   }
