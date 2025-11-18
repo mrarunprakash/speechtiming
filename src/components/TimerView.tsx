@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Play, Pause, RotateCcw, SkipForward } from "lucide-react";
+import { ArrowLeft, Play, Pause, RotateCcw } from "lucide-react";
 import { Speaker, formatTime, getTimingStatus } from "@/types/timer";
 import { cn } from "@/lib/utils";
 
@@ -10,7 +10,6 @@ interface TimerViewProps {
   totalSpeakers: number;
   onBack: () => void;
   onSaveAndNext: (actualSeconds: number) => void;
-  onSkip: () => void;
 }
 
 export const TimerView = ({
@@ -19,7 +18,6 @@ export const TimerView = ({
   totalSpeakers,
   onBack,
   onSaveAndNext,
-  onSkip,
 }: TimerViewProps) => {
   const [seconds, setSeconds] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
@@ -47,7 +45,7 @@ export const TimerView = ({
   }, [isRunning]);
 
   useEffect(() => {
-    if (seconds >= speaker.timingProfile.redBlinkSeconds) {
+    if (seconds > speaker.timingProfile.redSeconds) {
       if (!blinkIntervalRef.current) {
         blinkIntervalRef.current = setInterval(() => {
           setIsBlink((prev) => !prev);
@@ -66,7 +64,7 @@ export const TimerView = ({
         clearInterval(blinkIntervalRef.current);
       }
     };
-  }, [seconds, speaker.timingProfile.redBlinkSeconds]);
+  }, [seconds, speaker.timingProfile.redSeconds]);
 
   const getBackgroundColor = () => {
     if (isBlink) {
@@ -248,8 +246,8 @@ export const TimerView = ({
               size="lg"
             >
               {speakerNumber === totalSpeakers
-                ? "Finish & View Report"
-                : "Save & Next Speaker"}
+                ? "Generate Report (PDF)"
+                : "Continue"}
             </Button>
             <Button
               onClick={handleStart}
@@ -261,25 +259,15 @@ export const TimerView = ({
           </>
         )}
 
-        <div className="flex gap-3">
-          <Button
-            onClick={handleReset}
-            variant="outline"
-            className="flex-1 h-12"
-            disabled={seconds === 0}
-          >
-            <RotateCcw className="w-4 h-4 mr-2" />
-            Reset
-          </Button>
-          <Button
-            onClick={onSkip}
-            variant="outline"
-            className="flex-1 h-12"
-          >
-            <SkipForward className="w-4 h-4 mr-2" />
-            Skip
-          </Button>
-        </div>
+        <Button
+          onClick={handleReset}
+          variant="outline"
+          className="w-full h-12"
+          disabled={seconds === 0}
+        >
+          <RotateCcw className="w-4 h-4 mr-2" />
+          Reset
+        </Button>
       </div>
     </div>
   );

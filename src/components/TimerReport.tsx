@@ -1,10 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Copy, CheckCircle2 } from "lucide-react";
+import { Download, CheckCircle2 } from "lucide-react";
 import { Speaker, formatTime } from "@/types/timer";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 interface TimerReportProps {
   meetingName: string;
@@ -19,7 +21,7 @@ export const TimerReport = ({
   speakers,
   onStartNew,
 }: TimerReportProps) => {
-  const [copied, setCopied] = useState(false);
+  const [generated, setGenerated] = useState(false);
   const { toast } = useToast();
 
   const getSpeechTypeLabel = (type: string) => {
@@ -96,19 +98,85 @@ export const TimerReport = ({
     return report;
   };
 
-  const handleCopyReport = async () => {
-    const reportText = generateReportText();
+  const handleGeneratePDF = () => {
     try {
-      await navigator.clipboard.writeText(reportText);
-      setCopied(true);
-      toast({
-        title: "Report copied!",
-        description: "The timer report has been copied to your clipboard.",
+      const doc = new jsPDF();
+      const date = new Date(meetingDate).toLocaleDateString("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
       });
-      setTimeout(() => setCopied(false), 3000);
+
+      // Title
+      doc.setFontSize(18);
+      doc.text("Timer's Report", 14, 20);
+      
+      // Meeting details
+      doc.setFontSize(12);
+      doc.text(meetingName, 14, 30);
+      doc.setFontSize(10);
+      doc.text(date, 14, 37);
+
+      // Table data
+      const tableData = speakers.map((speaker, index) => {
+        const targetTime = `${formatTime(speaker.timingProfile.greenSeconds)}–${formatTime(speaker.timingProfile.redSeconds)}`;
+        const actualTime = speaker.actualSeconds ? formatTime(speaker.actualSeconds) : "–";
+        
+        let status = "–";
+        if (speaker.status === "WITHIN") status = "✓ Within";
+        else if (speaker.status === "UNDER") status = "⚠ Under";
+        else if (speaker.status === "OVER") status = "⚠ Over";
+        else if (speaker.status === "DISQUALIFIED") status = "✗ Disqualified";
+
+        return [
+          (index + 1).toString(),
+          speaker.name,
+          getSpeechTypeLabel(speaker.speechType),
+          targetTime,
+          actualTime,
+          status,
+        ];
+      });
+
+      autoTable(doc, {
+        startY: 45,
+        head: [["#", "Speaker", "Role", "Target Time", "Actual Time", "Status"]],
+        body: tableData,
+        didParseCell: (data) => {
+          if (data.section === 'body' && data.column.index === 5) {
+            const speaker = speakers[data.row.index];
+            if (speaker.status === "WITHIN") {
+              data.cell.styles.fillColor = [34, 197, 94]; // green
+              data.cell.styles.textColor = [255, 255, 255];
+            } else if (speaker.status === "UNDER") {
+              data.cell.styles.fillColor = [234, 179, 8]; // yellow
+              data.cell.styles.textColor = [255, 255, 255];
+            } else if (speaker.status === "OVER" || speaker.status === "DISQUALIFIED") {
+              data.cell.styles.fillColor = [239, 68, 68]; // red
+              data.cell.styles.textColor = [255, 255, 255];
+            }
+          }
+        },
+        headStyles: {
+          fillColor: [59, 130, 246], // blue
+          textColor: [255, 255, 255],
+        },
+      });
+
+      // Save PDF
+      const fileName = `timer-report-${new Date(meetingDate).toISOString().split('T')[0]}.pdf`;
+      doc.save(fileName);
+      
+      setGenerated(true);
+      toast({
+        title: "PDF Generated!",
+        description: "The timer report has been downloaded as PDF.",
+      });
+      setTimeout(() => setGenerated(false), 3000);
     } catch (error) {
       toast({
-        title: "Failed to copy",
+        title: "Failed to generate PDF",
         description: "Please try again.",
         variant: "destructive",
       });
@@ -194,19 +262,19 @@ export const TimerReport = ({
 
         <div className="flex gap-3">
           <Button
-            onClick={handleCopyReport}
+            onClick={handleGeneratePDF}
             className="flex-1 h-14 text-lg"
             size="lg"
           >
-            {copied ? (
+            {generated ? (
               <>
                 <CheckCircle2 className="w-5 h-5 mr-2" />
-                Copied!
+                Downloaded!
               </>
             ) : (
               <>
-                <Copy className="w-5 h-5 mr-2" />
-                Copy Report
+                <Download className="w-5 h-5 mr-2" />
+                Download PDF Report
               </>
             )}
           </Button>
