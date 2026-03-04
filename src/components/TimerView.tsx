@@ -189,7 +189,7 @@ export const TimerView = ({
         </div>
 
         {isStopped && (
-          <div className="bg-background/90 backdrop-blur-sm rounded-lg p-6 text-center max-w-md">
+          <div className="bg-background/90 backdrop-blur-sm rounded-lg p-6 text-center max-w-md animate-scale-in">
             <p className="text-lg font-semibold mb-2">Recorded Time</p>
             <p className="text-4xl font-mono font-bold mb-4">
               {formatTime(seconds)}
@@ -234,7 +234,7 @@ export const TimerView = ({
       {/* Controls */}
       <div className="p-6 space-y-3 bg-background/80 backdrop-blur-sm">
         {!isRunning && !isPaused && !isStopped && (
-          <Button onClick={handleStart} className="w-full h-16 text-xl" size="lg">
+          <Button onClick={handleStart} className="w-full h-16 text-xl animate-fade-in" size="lg">
             <Play className="w-6 h-6 mr-2" />
             Start
           </Button>
@@ -244,7 +244,7 @@ export const TimerView = ({
           <Button
             onClick={handlePause}
             variant="secondary"
-            className="w-full h-16 text-xl"
+            className="w-full h-16 text-xl animate-fade-in"
             size="lg"
           >
             <Pause className="w-6 h-6 mr-2" />
@@ -253,7 +253,7 @@ export const TimerView = ({
         )}
 
         {isPaused && (
-          <>
+          <div className="space-y-3 animate-fade-in">
             <Button onClick={handleResume} className="w-full h-16 text-xl" size="lg">
               <Play className="w-6 h-6 mr-2" />
               Resume
@@ -267,13 +267,13 @@ export const TimerView = ({
               <Square className="w-6 h-6 mr-2" />
               Stop Timing
             </Button>
-          </>
+          </div>
         )}
 
         {isStopped && (
           <Button
             onClick={handleSaveAndNext}
-            className="w-full h-16 text-xl"
+            className="w-full h-16 text-xl animate-fade-in"
             size="lg"
           >
             {speakerNumber === totalSpeakers
@@ -286,7 +286,7 @@ export const TimerView = ({
           <Button
             onClick={handleReset}
             variant="outline"
-            className="w-full h-12"
+            className="w-full h-12 animate-fade-in"
           >
             <RotateCcw className="w-4 h-4 mr-2" />
             Reset
