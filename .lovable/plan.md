@@ -1,21 +1,30 @@
 
 
-## Plan: Add Status Summary Section to Report
+## Plan: Back Button Confirmation with Timer State Preservation
 
-Add a summary bar between the report header card and the speaker list in `src/components/TimerReport.tsx`.
+### Problem
+Clicking the back arrow during timing immediately discards the timer — no warning, no way to resume.
 
-### Implementation
+### Changes
 
-**`src/components/TimerReport.tsx`** — After the header `<Card>` and before the speaker list `<div className="space-y-3">`:
+#### 1. `src/pages/Index.tsx` — Lift paused timer state
+- Add a `pausedTimers` state: `Record<number, number>` mapping speaker index → paused seconds
+- When `TimerView` calls a new `onPauseAndBack(seconds)` callback, store `pausedTimers[currentSpeakerIndex] = seconds` and navigate back to speakers list
+- When entering timing view, pass `initialSeconds={pausedTimers[currentSpeakerIndex] || 0}` to `TimerView`
+- Modify `handleStartTiming` to resume from the paused speaker index if one exists, instead of always resetting to 0
 
-1. Compute counts per status from `speakers` array (WITHIN, UNDER, OVER, DISQUALIFIED)
-2. Render a row of colored stat badges/chips showing non-zero counts:
-   - Green chip: "3 On Time"
-   - Yellow chip: "1 Under Time"
-   - Orange chip: "1 Over Time"  
-   - Red chip: "1 Disqualified"
-3. Also show total speaker count (e.g., "6 Speakers")
-4. Use a simple `Card` with a flex-wrap row of colored badges
+#### 2. `src/components/TimerView.tsx` — Add confirmation dialog + accept initial seconds
+- Add `initialSeconds` prop (default 0) and `onPauseAndBack` callback prop
+- Initialize `seconds` state from `initialSeconds`; if `initialSeconds > 0`, start in paused state so user can resume
+- Add `showBackDialog` state
+- Replace direct `onBack()` call on back button with: if `seconds > 0`, show an `AlertDialog` with:
+  - **"Pause & Go Back"** — calls `onPauseAndBack(seconds)` (pauses timer, saves time, goes back)
+  - **"Stop & Discard"** — calls `onBack()` directly (loses time)
+  - **"Cancel"** — closes dialog, timer continues
+- Auto-pause the timer when the dialog opens (so time doesn't keep ticking while deciding)
+- If `seconds === 0`, back button works immediately without dialog (nothing to lose)
 
-Only `TimerReport.tsx` changes. ~15 lines added.
+#### 3. Files changed
+- `src/pages/Index.tsx` (~15 lines)
+- `src/components/TimerView.tsx` (~30 lines)
 
