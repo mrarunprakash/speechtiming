@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Pencil, Trash2, Clock } from "lucide-react";
+import { Plus, Pencil, Trash2, Clock, Pause } from "lucide-react";
 import { Speaker, formatTime } from "@/types/timer";
 import { SpeakerDialog } from "./SpeakerDialog";
 
@@ -14,6 +14,7 @@ interface SpeakersListProps {
   onEditSpeaker: (speaker: Speaker) => void;
   onDeleteSpeaker: (id: string) => void;
   onStartTiming: () => void;
+  pausedTimers?: Record<number, number>;
 }
 
 export const SpeakersList = ({
@@ -24,6 +25,7 @@ export const SpeakersList = ({
   onEditSpeaker,
   onDeleteSpeaker,
   onStartTiming,
+  pausedTimers = {},
 }: SpeakersListProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingSpeaker, setEditingSpeaker] = useState<Speaker | null>(null);
@@ -110,6 +112,12 @@ export const SpeakersList = ({
                           <h3 className="font-semibold text-lg truncate">
                             {speaker.name}
                           </h3>
+                          {pausedTimers[index] !== undefined && (
+                            <Badge variant="secondary" className="text-xs flex items-center gap-1">
+                              <Pause className="w-3 h-3" />
+                              {formatTime(pausedTimers[index])}
+                            </Badge>
+                          )}
                         </div>
                         <div className="flex items-center gap-3 text-sm text-muted-foreground">
                           <span>{getSpeechTypeLabel(speaker.speechType)}</span>
