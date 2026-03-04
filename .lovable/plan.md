@@ -1,41 +1,32 @@
 
 
-## Plan: Make App Fit Viewport Without Scrolling (Native-Feel Layout)
+## Plan: Rework Timer Controls — Pause/Resume/Stop
 
-The core issue is that every screen uses `min-h-screen` with its own padding/spacing, and `MeetingSetup` has a nested `min-h-screen` inside the already `min-h-screen` parent layout in `Index.tsx`. This causes double-height content and unnecessary scrolling.
+### Current Behavior
+- **Pause** stops the timer and immediately shows a "Recorded Time" status card with timing evaluation
+- **Paused state** shows "Continue" (or "Generate Report") — acts as save & next
+- No "Resume" or "Stop" button exists
 
-### Root Cause
-- `Index.tsx` wraps everything in `flex min-h-screen flex-col` with header + main + footer
-- Each child component (MeetingSetup, SpeakersList, TimerView, TimerReport) also uses `min-h-screen`, doubling the height
-- No use of `h-screen` / `overflow-hidden` to contain content within the viewport
+### Desired Behavior
+- **Pause** simply pauses the timer — no status card, no evaluation shown
+- **Resume** continues the timer from where it left off
+- **Stop Timing** finalizes the speaker's time and shows the status summary, then offers "Continue" / "Generate Report"
 
-### Changes
+### Changes to `src/components/TimerView.tsx`
 
-**1. `src/pages/Index.tsx`**
-- Change outer wrapper from `min-h-screen` to `h-[100dvh]` (dynamic viewport height for mobile browsers) with `overflow-hidden`
-- Make `<main>` use `flex-1 overflow-hidden` so child content fills remaining space between header and footer
+1. **Add a `isStopped` state** (separate from `isPaused`) to distinguish paused vs finalized
+2. **Rework control buttons:**
+   - **Running:** Show `Pause` button
+   - **Paused:** Show `Resume` button + `Stop Timing` button (destructive style)
+   - **Stopped:** Show the recorded time/status card + `Continue`/`Generate Report` button + `Reset`
+3. **Remove the status card from the paused state** — only show it in stopped state
+4. **Add `Square` (stop) icon** from lucide-react for the Stop button
+5. **Keep Reset** available in paused and stopped states
 
-**2. `src/components/MeetingSetup.tsx`**
-- Remove `min-h-screen` — replace with `h-full flex items-center justify-center`
-- Content will center within the available main area
+### Button Layout (matching current UI style)
 
-**3. `src/components/SpeakersList.tsx`**
-- Remove `min-h-screen` — use `h-full flex flex-col overflow-hidden`
-- Make the speakers list area scrollable (`overflow-y-auto flex-1`) while keeping header card and bottom button fixed
-- Change the fixed bottom button from `fixed` positioning to a flex-based sticky footer within the container
-
-**4. `src/components/TimerView.tsx`**
-- Remove `min-h-screen` — use `h-full flex flex-col`
-- Timer display area uses `flex-1` to fill available space
-- Controls stay pinned at bottom naturally
-
-**5. `src/components/TimerReport.tsx`**
-- Remove `min-h-screen` — use `h-full flex flex-col overflow-hidden`
-- Make speaker cards area scrollable with `overflow-y-auto flex-1`
-- Keep action buttons pinned at bottom
-
-**6. `src/index.css`**
-- Add `html, body, #root { height: 100%; overflow: hidden; }` to prevent any page-level scrolling
-
-These changes will make every screen fit exactly within the viewport on phone, tablet, and desktop — no page scroll, with internal scroll only where content overflows (speakers list, report cards).
+- **Initial:** `[▶ Start]` full-width primary + `[↺ Reset]` outline
+- **Running:** `[⏸ Pause]` full-width secondary + `[↺ Reset]` outline
+- **Paused:** `[▶ Resume]` full-width primary + `[⏹ Stop Timing]` full-width destructive + `[↺ Reset]` outline
+- **Stopped:** `[Continue / Generate Report]` full-width primary + `[↺ Reset]` outline
 
