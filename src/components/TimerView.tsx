@@ -136,7 +136,7 @@ export const TimerView = ({
   return (
     <div
       className={cn(
-        "min-h-screen flex flex-col transition-colors duration-300",
+        "h-full flex flex-col transition-colors duration-300 overflow-hidden",
         getBackgroundColor()
       )}
     >
