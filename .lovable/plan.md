@@ -1,17 +1,21 @@
 
 
-## Plan: Replace All "Toastmasters" References
+## Plan: Add Status Summary Section to Report
 
-Update 3 files to replace "Toastmasters" with generic "Speech Timer" branding:
+Add a summary bar between the report header card and the speaker list in `src/components/TimerReport.tsx`.
 
-### 1. `index.html` — Meta tags
-- Title: `"Speech Timer - Timing & Reports"`
-- Description: `"Professional speech timing tool for meetings. Track speakers, manage timing profiles, and generate reports instantly."`
-- Same updates for `og:title`, `og:description`, `twitter:title`, `twitter:description`
+### Implementation
 
-### 2. `src/components/MeetingSetup.tsx` (line 29)
-- Change `"Record timing & generate reports for Toastmasters meetings"` → `"Record timing & generate reports for your meetings"`
+**`src/components/TimerReport.tsx`** — After the header `<Card>` and before the speaker list `<div className="space-y-3">`:
 
-### 3. `src/pages/FAQ.tsx` (line 31)
-- Change `"This is a Toastmasters meeting timer designed to help track speaker timing"` → `"This is a speech timer designed to help track speaker timing"`
+1. Compute counts per status from `speakers` array (WITHIN, UNDER, OVER, DISQUALIFIED)
+2. Render a row of colored stat badges/chips showing non-zero counts:
+   - Green chip: "3 On Time"
+   - Yellow chip: "1 Under Time"
+   - Orange chip: "1 Over Time"  
+   - Red chip: "1 Disqualified"
+3. Also show total speaker count (e.g., "6 Speakers")
+4. Use a simple `Card` with a flex-wrap row of colored badges
+
+Only `TimerReport.tsx` changes. ~15 lines added.
 
