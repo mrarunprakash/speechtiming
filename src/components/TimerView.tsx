@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Play, Pause, RotateCcw } from "lucide-react";
+import { ArrowLeft, Play, Pause, RotateCcw, Square } from "lucide-react";
 import { Speaker, formatTime, getTimingStatus } from "@/types/timer";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +22,7 @@ export const TimerView = ({
   const [seconds, setSeconds] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [isStopped, setIsStopped] = useState(false);
   const [isBlink, setIsBlink] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const blinkIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -101,6 +102,7 @@ export const TimerView = ({
   const handleStart = () => {
     setIsRunning(true);
     setIsPaused(false);
+    setIsStopped(false);
   };
 
   const handlePause = () => {
@@ -108,9 +110,21 @@ export const TimerView = ({
     setIsPaused(true);
   };
 
+  const handleResume = () => {
+    setIsRunning(true);
+    setIsPaused(false);
+  };
+
+  const handleStop = () => {
+    setIsRunning(false);
+    setIsPaused(false);
+    setIsStopped(true);
+  };
+
   const handleReset = () => {
     setIsRunning(false);
     setIsPaused(false);
+    setIsStopped(false);
     setSeconds(0);
   };
 
@@ -174,7 +188,7 @@ export const TimerView = ({
           </div>
         </div>
 
-        {isPaused && (
+        {isStopped && (
           <div className="bg-background/90 backdrop-blur-sm rounded-lg p-6 text-center max-w-md">
             <p className="text-lg font-semibold mb-2">Recorded Time</p>
             <p className="text-4xl font-mono font-bold mb-4">
@@ -219,7 +233,7 @@ export const TimerView = ({
 
       {/* Controls */}
       <div className="p-6 space-y-3 bg-background/80 backdrop-blur-sm">
-        {!isRunning && !isPaused && (
+        {!isRunning && !isPaused && !isStopped && (
           <Button onClick={handleStart} className="w-full h-16 text-xl" size="lg">
             <Play className="w-6 h-6 mr-2" />
             Start
@@ -239,6 +253,24 @@ export const TimerView = ({
         )}
 
         {isPaused && (
+          <>
+            <Button onClick={handleResume} className="w-full h-16 text-xl" size="lg">
+              <Play className="w-6 h-6 mr-2" />
+              Resume
+            </Button>
+            <Button
+              onClick={handleStop}
+              variant="destructive"
+              className="w-full h-16 text-xl"
+              size="lg"
+            >
+              <Square className="w-6 h-6 mr-2" />
+              Stop Timing
+            </Button>
+          </>
+        )}
+
+        {isStopped && (
           <Button
             onClick={handleSaveAndNext}
             className="w-full h-16 text-xl"
@@ -250,15 +282,28 @@ export const TimerView = ({
           </Button>
         )}
 
-        <Button
-          onClick={handleReset}
-          variant="outline"
-          className="w-full h-12"
-          disabled={seconds === 0}
-        >
-          <RotateCcw className="w-4 h-4 mr-2" />
-          Reset
-        </Button>
+        {(isPaused || isStopped) && (
+          <Button
+            onClick={handleReset}
+            variant="outline"
+            className="w-full h-12"
+          >
+            <RotateCcw className="w-4 h-4 mr-2" />
+            Reset
+          </Button>
+        )}
+
+        {!isPaused && !isStopped && (
+          <Button
+            onClick={handleReset}
+            variant="outline"
+            className="w-full h-12"
+            disabled={seconds === 0}
+          >
+            <RotateCcw className="w-4 h-4 mr-2" />
+            Reset
+          </Button>
+        )}
       </div>
     </div>
   );
