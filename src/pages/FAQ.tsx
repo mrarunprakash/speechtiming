@@ -28,7 +28,7 @@ const FAQ = () => {
           <div>
             <h2 className="text-lg font-semibold mb-2">What is this timer for?</h2>
             <p className="text-muted-foreground">
-              This is a Toastmasters meeting timer designed to help track speaker timing
+              This is a speech timer designed to help track speaker timing
               during meetings. It supports multiple timing profiles (green, yellow, red zones)
               and generates detailed reports.
             </p>

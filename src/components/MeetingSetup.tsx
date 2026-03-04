@@ -26,7 +26,7 @@ export const MeetingSetup = ({ onStart }: MeetingSetupProps) => {
             Speech Timer
           </CardTitle>
           <CardDescription className="text-base">
-            Record timing & generate reports for Toastmasters meetings
+            Record timing & generate reports for your meetings
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
