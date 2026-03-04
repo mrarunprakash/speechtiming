@@ -214,6 +214,29 @@ export const TimerReport = ({
             </CardHeader>
           </Card>
 
+          {(() => {
+            const counts = { WITHIN: 0, UNDER: 0, OVER: 0, DISQUALIFIED: 0 };
+            speakers.forEach((s) => s.status && counts[s.status]++);
+            const chips = [
+              { key: "WITHIN", label: "On Time", cls: "bg-green-100 text-green-800 border-green-300" },
+              { key: "UNDER", label: "Under Time", cls: "bg-yellow-100 text-yellow-800 border-yellow-300" },
+              { key: "OVER", label: "Over Time", cls: "bg-orange-100 text-orange-800 border-orange-300" },
+              { key: "DISQUALIFIED", label: "Disqualified", cls: "bg-red-100 text-red-800 border-red-300" },
+            ];
+            return (
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge variant="outline" className="font-medium">{speakers.length} Speaker{speakers.length !== 1 ? "s" : ""}</Badge>
+                    {chips.map(({ key, label, cls }) => counts[key as keyof typeof counts] > 0 && (
+                      <Badge key={key} className={`border ${cls}`}>{counts[key as keyof typeof counts]} {label}</Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })()}
+
           <div className="space-y-3">
             {speakers.map((speaker, index) => (
               <Card key={speaker.id} className={getStatusColors(speaker.status).border}>
