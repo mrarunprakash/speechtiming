@@ -3,6 +3,16 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Play, Pause, RotateCcw, Square } from "lucide-react";
 import { Speaker, formatTime, getTimingStatus } from "@/types/timer";
 import { cn } from "@/lib/utils";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 
 interface TimerViewProps {
   speaker: Speaker;
@@ -10,6 +20,8 @@ interface TimerViewProps {
   totalSpeakers: number;
   onBack: () => void;
   onSaveAndNext: (actualSeconds: number) => void;
+  initialSeconds?: number;
+  onPauseAndBack?: (seconds: number) => void;
 }
 
 export const TimerView = ({
@@ -18,12 +30,16 @@ export const TimerView = ({
   totalSpeakers,
   onBack,
   onSaveAndNext,
+  initialSeconds = 0,
+  onPauseAndBack,
 }: TimerViewProps) => {
-  const [seconds, setSeconds] = useState(0);
+  const [seconds, setSeconds] = useState(initialSeconds);
   const [isRunning, setIsRunning] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
+  const [isPaused, setIsPaused] = useState(initialSeconds > 0);
   const [isStopped, setIsStopped] = useState(false);
   const [isBlink, setIsBlink] = useState(false);
+  const [showBackDialog, setShowBackDialog] = useState(false);
+  const wasRunningRef = useRef(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const blinkIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -156,7 +172,15 @@ export const TimerView = ({
     >
       {/* Header */}
       <div className="flex items-center justify-between p-4 bg-background/80 backdrop-blur-sm">
-        <Button variant="ghost" size="icon" onClick={onBack}>
+        <Button variant="ghost" size="icon" onClick={() => {
+          if (seconds > 0) {
+            wasRunningRef.current = isRunning;
+            setIsRunning(false);
+            setShowBackDialog(true);
+          } else {
+            onBack();
+          }
+        }}>
           <ArrowLeft className="w-5 h-5" />
         </Button>
         <div className="text-center flex-1">
@@ -305,6 +329,34 @@ export const TimerView = ({
           </Button>
         )}
       </div>
+
+      <AlertDialog open={showBackDialog} onOpenChange={setShowBackDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Timer is running</AlertDialogTitle>
+            <AlertDialogDescription>
+              You have {formatTime(seconds)} recorded. What would you like to do?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-col gap-2 sm:flex-col">
+            <AlertDialogAction onClick={() => {
+              onPauseAndBack?.(seconds);
+            }}>
+              Pause & Go Back
+            </AlertDialogAction>
+            <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => {
+              onBack();
+            }}>
+              Stop & Discard
+            </AlertDialogAction>
+            <AlertDialogCancel onClick={() => {
+              if (wasRunningRef.current) setIsRunning(true);
+            }}>
+              Cancel
+            </AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

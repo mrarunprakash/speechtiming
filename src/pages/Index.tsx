@@ -12,6 +12,7 @@ const Index = () => {
   const [appState, setAppState] = useState<AppState>("setup");
   const [meeting, setMeeting] = useState<Meeting | null>(null);
   const [currentSpeakerIndex, setCurrentSpeakerIndex] = useState(0);
+  const [pausedTimers, setPausedTimers] = useState<Record<number, number>>({});
 
   const handleStartMeeting = (meetingName: string, meetingDate: string) => {
     setMeeting({
@@ -50,8 +51,15 @@ const Index = () => {
   };
 
   const handleStartTiming = () => {
-    setCurrentSpeakerIndex(0);
+    // If there's a paused speaker, resume from them; otherwise start from 0
+    const pausedIndex = Object.keys(pausedTimers).map(Number).sort((a, b) => a - b)[0];
+    setCurrentSpeakerIndex(pausedIndex !== undefined ? pausedIndex : 0);
     setAppState("timing");
+  };
+
+  const handlePauseAndBack = (seconds: number) => {
+    setPausedTimers((prev) => ({ ...prev, [currentSpeakerIndex]: seconds }));
+    setAppState("speakers");
   };
 
   const handleSaveAndNext = (actualSeconds: number) => {
@@ -119,6 +127,8 @@ const Index = () => {
           totalSpeakers={meeting.speakers.length}
           onBack={handleBackToSpeakers}
           onSaveAndNext={handleSaveAndNext}
+          initialSeconds={pausedTimers[currentSpeakerIndex] || 0}
+          onPauseAndBack={handlePauseAndBack}
         />
       );
     }
