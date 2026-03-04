@@ -41,17 +41,53 @@ export const SpeakerDialog = ({
     redBlinkSeconds: 450,
   });
 
+  // Local string state for custom inputs so users can freely type/erase
+  const toMin = (s: number) => {
+    const val = s / 60;
+    return val % 1 === 0 ? val.toString() : val.toFixed(2).replace(/0+$/, "").replace(/\.$/, "");
+  };
+  const [customInputs, setCustomInputs] = useState({
+    min: toMin(300),
+    green: toMin(300),
+    yellow: toMin(360),
+    red: toMin(420),
+    redBlink: toMin(450),
+  });
+
   useEffect(() => {
     if (speaker) {
       setName(speaker.name);
       setSpeechType(speaker.speechType);
       setCustomProfile(speaker.timingProfile);
+      setCustomInputs({
+        min: toMin(speaker.timingProfile.minSeconds),
+        green: toMin(speaker.timingProfile.greenSeconds),
+        yellow: toMin(speaker.timingProfile.yellowSeconds),
+        red: toMin(speaker.timingProfile.redSeconds),
+        redBlink: toMin(speaker.timingProfile.redBlinkSeconds),
+      });
     } else {
       setName("");
       setSpeechType("PREPARED");
-      setCustomProfile(TIMING_PROFILES.PREPARED);
+      const def = TIMING_PROFILES.PREPARED;
+      setCustomProfile(def);
+      setCustomInputs({
+        min: toMin(def.minSeconds),
+        green: toMin(def.greenSeconds),
+        yellow: toMin(def.yellowSeconds),
+        red: toMin(def.redSeconds),
+        redBlink: toMin(def.redBlinkSeconds),
+      });
     }
   }, [speaker, open]);
+
+  const handleCustomInput = (field: string, profileKey: string, val: string) => {
+    setCustomInputs((prev) => ({ ...prev, [field]: val }));
+    const num = parseFloat(val);
+    if (!isNaN(num) && num >= 0) {
+      setCustomProfile((prev) => ({ ...prev, [profileKey]: Math.round(num * 60) }));
+    }
+  };
 
   const handleSave = () => {
     const profile =
@@ -147,13 +183,8 @@ export const SpeakerDialog = ({
                     type="number"
                     step="0.5"
                     min="0"
-                    value={+(customProfile.minSeconds / 60).toFixed(2)}
-                    onChange={(e) =>
-                      setCustomProfile({
-                        ...customProfile,
-                        minSeconds: Math.round((parseFloat(e.target.value) || 0) * 60),
-                      })
-                    }
+                    value={customInputs.min}
+                    onChange={(e) => handleCustomInput("min", "minSeconds", e.target.value)}
                   />
                 </div>
                 <div className="space-y-1">
@@ -163,13 +194,8 @@ export const SpeakerDialog = ({
                     type="number"
                     step="0.5"
                     min="0"
-                    value={+(customProfile.greenSeconds / 60).toFixed(2)}
-                    onChange={(e) =>
-                      setCustomProfile({
-                        ...customProfile,
-                        greenSeconds: Math.round((parseFloat(e.target.value) || 0) * 60),
-                      })
-                    }
+                    value={customInputs.green}
+                    onChange={(e) => handleCustomInput("green", "greenSeconds", e.target.value)}
                   />
                 </div>
                 <div className="space-y-1">
@@ -179,13 +205,8 @@ export const SpeakerDialog = ({
                     type="number"
                     step="0.5"
                     min="0"
-                    value={+(customProfile.yellowSeconds / 60).toFixed(2)}
-                    onChange={(e) =>
-                      setCustomProfile({
-                        ...customProfile,
-                        yellowSeconds: Math.round((parseFloat(e.target.value) || 0) * 60),
-                      })
-                    }
+                    value={customInputs.yellow}
+                    onChange={(e) => handleCustomInput("yellow", "yellowSeconds", e.target.value)}
                   />
                 </div>
                 <div className="space-y-1">
@@ -195,13 +216,8 @@ export const SpeakerDialog = ({
                     type="number"
                     step="0.5"
                     min="0"
-                    value={+(customProfile.redSeconds / 60).toFixed(2)}
-                    onChange={(e) =>
-                      setCustomProfile({
-                        ...customProfile,
-                        redSeconds: Math.round((parseFloat(e.target.value) || 0) * 60),
-                      })
-                    }
+                    value={customInputs.red}
+                    onChange={(e) => handleCustomInput("red", "redSeconds", e.target.value)}
                   />
                 </div>
                 <div className="space-y-1 col-span-2">
@@ -211,13 +227,8 @@ export const SpeakerDialog = ({
                     type="number"
                     step="0.5"
                     min="0"
-                    value={+(customProfile.redBlinkSeconds / 60).toFixed(2)}
-                    onChange={(e) =>
-                      setCustomProfile({
-                        ...customProfile,
-                        redBlinkSeconds: Math.round((parseFloat(e.target.value) || 0) * 60),
-                      })
-                    }
+                    value={customInputs.redBlink}
+                    onChange={(e) => handleCustomInput("redBlink", "redBlinkSeconds", e.target.value)}
                   />
                 </div>
               </div>
