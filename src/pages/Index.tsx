@@ -142,7 +142,7 @@ const Index = () => {
       <header className="border-b bg-card/80 backdrop-blur-sm shrink-0">
         <div className="container mx-auto flex items-center justify-between px-4 py-3">
           <div className="text-sm font-semibold tracking-tight">
-            Toastmasters Timer
+            Speech Timer
           </div>
           <Link
             to="/faq"
