@@ -1,32 +1,28 @@
 
 
-## Plan: Rework Timer Controls — Pause/Resume/Stop
+## Plan: Color-Coded Report Cards by Status
 
-### Current Behavior
-- **Pause** stops the timer and immediately shows a "Recorded Time" status card with timing evaluation
-- **Paused state** shows "Continue" (or "Generate Report") — acts as save & next
-- No "Resume" or "Stop" button exists
+### What Changes
 
-### Desired Behavior
-- **Pause** simply pauses the timer — no status card, no evaluation shown
-- **Resume** continues the timer from where it left off
-- **Stop Timing** finalizes the speaker's time and shows the status summary, then offers "Continue" / "Generate Report"
+**`src/components/TimerReport.tsx`** — Add status-based color styling to each speaker card in the report:
 
-### Changes to `src/components/TimerView.tsx`
+1. **Card border/left accent by status:**
+   - WITHIN → green left border (`border-l-4 border-l-green-500`)
+   - UNDER → yellow left border (`border-l-4 border-l-yellow-500`)
+   - OVER → orange left border (`border-l-4 border-l-orange-500`)
+   - DISQUALIFIED → red left border (`border-l-4 border-l-red-500`)
 
-1. **Add a `isStopped` state** (separate from `isPaused`) to distinguish paused vs finalized
-2. **Rework control buttons:**
-   - **Running:** Show `Pause` button
-   - **Paused:** Show `Resume` button + `Stop Timing` button (destructive style)
-   - **Stopped:** Show the recorded time/status card + `Continue`/`Generate Report` button + `Reset`
-3. **Remove the status card from the paused state** — only show it in stopped state
-4. **Add `Square` (stop) icon** from lucide-react for the Stop button
-5. **Keep Reset** available in paused and stopped states
+2. **Actual Time text color by status:**
+   - WITHIN → `text-green-600`
+   - UNDER → `text-yellow-600`
+   - OVER → `text-orange-600`
+   - DISQUALIFIED → `text-red-600`
 
-### Button Layout (matching current UI style)
+3. **Disqualification detail** already exists — keep as-is with `text-destructive`
 
-- **Initial:** `[▶ Start]` full-width primary + `[↺ Reset]` outline
-- **Running:** `[⏸ Pause]` full-width secondary + `[↺ Reset]` outline
-- **Paused:** `[▶ Resume]` full-width primary + `[⏹ Stop Timing]` full-width destructive + `[↺ Reset]` outline
-- **Stopped:** `[Continue / Generate Report]` full-width primary + `[↺ Reset]` outline
+4. **PDF report** — already has colored status cells, no changes needed there
+
+### Scope
+- Only `TimerReport.tsx` is modified
+- ~10 lines changed: add a helper function for status-to-color mapping, apply classes to the Card and time display
 
