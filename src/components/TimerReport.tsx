@@ -37,6 +37,16 @@ export const TimerReport = ({
     }
   };
 
+  const getStatusColors = (status?: string) => {
+    switch (status) {
+      case "WITHIN": return { border: "border-l-4 border-l-green-500", text: "text-green-600" };
+      case "UNDER": return { border: "border-l-4 border-l-yellow-500", text: "text-yellow-600" };
+      case "OVER": return { border: "border-l-4 border-l-orange-500", text: "text-orange-600" };
+      case "DISQUALIFIED": return { border: "border-l-4 border-l-red-500", text: "text-red-600" };
+      default: return { border: "", text: "" };
+    }
+  };
+
   const getStatusBadge = (status: string | undefined) => {
     if (!status) return null;
 
@@ -206,7 +216,7 @@ export const TimerReport = ({
 
           <div className="space-y-3">
             {speakers.map((speaker, index) => (
-              <Card key={speaker.id}>
+              <Card key={speaker.id} className={getStatusColors(speaker.status).border}>
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between gap-3 mb-2">
                     <div className="flex-1">
@@ -236,7 +246,7 @@ export const TimerReport = ({
                         Actual Time:
                       </span>
                       <div className="flex items-center">
-                        <span className="font-mono font-bold text-lg">
+                        <span className={`font-mono font-bold text-lg ${getStatusColors(speaker.status).text}`}>
                           {speaker.actualSeconds
                             ? formatTime(speaker.actualSeconds)
                             : "–"}
