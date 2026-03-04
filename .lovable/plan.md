@@ -1,28 +1,17 @@
 
 
-## Plan: Color-Coded Report Cards by Status
+## Plan: Replace All "Toastmasters" References
 
-### What Changes
+Update 3 files to replace "Toastmasters" with generic "Speech Timer" branding:
 
-**`src/components/TimerReport.tsx`** — Add status-based color styling to each speaker card in the report:
+### 1. `index.html` — Meta tags
+- Title: `"Speech Timer - Timing & Reports"`
+- Description: `"Professional speech timing tool for meetings. Track speakers, manage timing profiles, and generate reports instantly."`
+- Same updates for `og:title`, `og:description`, `twitter:title`, `twitter:description`
 
-1. **Card border/left accent by status:**
-   - WITHIN → green left border (`border-l-4 border-l-green-500`)
-   - UNDER → yellow left border (`border-l-4 border-l-yellow-500`)
-   - OVER → orange left border (`border-l-4 border-l-orange-500`)
-   - DISQUALIFIED → red left border (`border-l-4 border-l-red-500`)
+### 2. `src/components/MeetingSetup.tsx` (line 29)
+- Change `"Record timing & generate reports for Toastmasters meetings"` → `"Record timing & generate reports for your meetings"`
 
-2. **Actual Time text color by status:**
-   - WITHIN → `text-green-600`
-   - UNDER → `text-yellow-600`
-   - OVER → `text-orange-600`
-   - DISQUALIFIED → `text-red-600`
-
-3. **Disqualification detail** already exists — keep as-is with `text-destructive`
-
-4. **PDF report** — already has colored status cells, no changes needed there
-
-### Scope
-- Only `TimerReport.tsx` is modified
-- ~10 lines changed: add a helper function for status-to-color mapping, apply classes to the Card and time display
+### 3. `src/pages/FAQ.tsx` (line 31)
+- Change `"This is a Toastmasters meeting timer designed to help track speaker timing"` → `"This is a speech timer designed to help track speaker timing"`
 
