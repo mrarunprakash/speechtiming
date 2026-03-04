@@ -67,92 +67,94 @@ export const SpeakersList = ({
   };
 
   return (
-    <div className="min-h-screen bg-background p-4 pb-24">
-      <div className="max-w-2xl mx-auto space-y-6">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-2xl font-bold text-primary">
-              {meetingName}
-            </CardTitle>
-            <p className="text-sm text-muted-foreground">
-              {new Date(meetingDate).toLocaleDateString("en-US", {
-                weekday: "long",
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
-            </p>
-          </CardHeader>
-        </Card>
+    <div className="h-full bg-background flex flex-col overflow-hidden">
+      <div className="flex-1 overflow-y-auto p-4">
+        <div className="max-w-2xl mx-auto space-y-6">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-2xl font-bold text-primary">
+                {meetingName}
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">
+                {new Date(meetingDate).toLocaleDateString("en-US", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </p>
+            </CardHeader>
+          </Card>
 
-        <div className="space-y-3">
-          {speakers.length === 0 ? (
-            <Card className="border-dashed">
-              <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-                <Clock className="w-12 h-12 text-muted-foreground mb-4" />
-                <p className="text-muted-foreground mb-2">No speakers added yet</p>
-                <p className="text-sm text-muted-foreground">
-                  Add speakers to start timing
-                </p>
-              </CardContent>
-            </Card>
-          ) : (
-            speakers.map((speaker, index) => (
-              <Card key={speaker.id} className="hover:shadow-md transition-shadow">
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Badge variant="outline" className="font-mono">
-                          #{index + 1}
-                        </Badge>
-                        <h3 className="font-semibold text-lg truncate">
-                          {speaker.name}
-                        </h3>
-                      </div>
-                      <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                        <span>{getSpeechTypeLabel(speaker.speechType)}</span>
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          {getTimeRangeLabel(speaker.timingProfile)}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleEditClick(speaker)}
-                      >
-                        <Pencil className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => onDeleteSpeaker(speaker.id)}
-                      >
-                        <Trash2 className="w-4 h-4 text-destructive" />
-                      </Button>
-                    </div>
-                  </div>
+          <div className="space-y-3">
+            {speakers.length === 0 ? (
+              <Card className="border-dashed">
+                <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+                  <Clock className="w-12 h-12 text-muted-foreground mb-4" />
+                  <p className="text-muted-foreground mb-2">No speakers added yet</p>
+                  <p className="text-sm text-muted-foreground">
+                    Add speakers to start timing
+                  </p>
                 </CardContent>
               </Card>
-            ))
-          )}
-        </div>
+            ) : (
+              speakers.map((speaker, index) => (
+                <Card key={speaker.id} className="hover:shadow-md transition-shadow">
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Badge variant="outline" className="font-mono">
+                            #{index + 1}
+                          </Badge>
+                          <h3 className="font-semibold text-lg truncate">
+                            {speaker.name}
+                          </h3>
+                        </div>
+                        <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                          <span>{getSpeechTypeLabel(speaker.speechType)}</span>
+                          <span className="flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            {getTimeRangeLabel(speaker.timingProfile)}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEditClick(speaker)}
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => onDeleteSpeaker(speaker.id)}
+                        >
+                          <Trash2 className="w-4 h-4 text-destructive" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </div>
 
-        <Button
-          onClick={handleAddClick}
-          variant="outline"
-          className="w-full h-14 text-base"
-          size="lg"
-        >
-          <Plus className="w-5 h-5 mr-2" />
-          Add Speaker
-        </Button>
+          <Button
+            onClick={handleAddClick}
+            variant="outline"
+            className="w-full h-14 text-base"
+            size="lg"
+          >
+            <Plus className="w-5 h-5 mr-2" />
+            Add Speaker
+          </Button>
+        </div>
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-background border-t">
+      <div className="shrink-0 p-4 bg-background border-t">
         <div className="max-w-2xl mx-auto">
           <Button
             onClick={onStartTiming}
