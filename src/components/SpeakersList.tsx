@@ -33,6 +33,7 @@ export const SpeakersList = ({
   const [editingSpeaker, setEditingSpeaker] = useState<Speaker | null>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [droppedIndex, setDroppedIndex] = useState<number | null>(null);
 
   // Touch drag state
   const touchDragIndex = useRef<number | null>(null);
@@ -78,6 +79,11 @@ export const SpeakersList = ({
     setDragOverIndex(index);
   };
 
+  const triggerDropAnimation = (targetIndex: number) => {
+    setDroppedIndex(targetIndex);
+    setTimeout(() => setDroppedIndex(null), 300);
+  };
+
   const handleDragEnd = () => {
     if (dragNodeRef.current) dragNodeRef.current.style.opacity = "1";
     if (dragIndex !== null && dragOverIndex !== null && dragIndex !== dragOverIndex) {
@@ -85,6 +91,7 @@ export const SpeakersList = ({
       const [moved] = reordered.splice(dragIndex, 1);
       reordered.splice(dragOverIndex, 0, moved);
       onReorderSpeakers(reordered);
+      triggerDropAnimation(dragOverIndex);
     }
     setDragIndex(null);
     setDragOverIndex(null);
@@ -171,6 +178,7 @@ export const SpeakersList = ({
       const [moved] = reordered.splice(from, 1);
       reordered.splice(to, 0, moved);
       onReorderSpeakers(reordered);
+      triggerDropAnimation(to);
     }
 
     touchDragIndex.current = null;
@@ -243,8 +251,10 @@ export const SpeakersList = ({
                   }`}
                   style={{ touchAction: "pan-x" }}
                 >
-                  <Card className={`hover:shadow-md transition-shadow ${
-                    dragIndex === index ? "opacity-40" : ""
+                  <Card className={`transition-all duration-200 ${
+                    dragIndex === index ? "animate-card-pickup opacity-40" :
+                    droppedIndex === index ? "animate-card-drop" :
+                    "hover:shadow-md"
                   }`}>
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between gap-3">
