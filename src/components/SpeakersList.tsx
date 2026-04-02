@@ -178,6 +178,7 @@ export const SpeakersList = ({
       const [moved] = reordered.splice(from, 1);
       reordered.splice(to, 0, moved);
       onReorderSpeakers(reordered);
+      triggerDropAnimation(to);
     }
 
     touchDragIndex.current = null;
