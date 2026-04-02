@@ -2,29 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 210 11% 15%;
+    --background: 240 12% 6%;
+    --foreground: 40 20% 92%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 210 11% 15%;
+    --card: 240 10% 10%;
+    --card-foreground: 40 20% 92%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 210 11% 15%;
+    --popover: 240 10% 10%;
+    --popover-foreground: 40 20% 92%;
 
     --primary: 186 100% 29%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 17% 95%;
-    --secondary-foreground: 210 11% 15%;
+    --secondary: 240 10% 14%;
+    --secondary-foreground: 40 20% 92%;
 
-    --muted: 210 17% 95%;
-    --muted-foreground: 210 9% 45%;
+    --muted: 240 10% 14%;
+    --muted-foreground: 40 10% 55%;
 
     --accent: 186 100% 29%;
     --accent-foreground: 0 0% 100%;
@@ -32,72 +28,27 @@ All colors MUST be HSL.
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 17% 90%;
-    --input: 210 17% 90%;
+    --border: 0 0% 100% / 0.05;
+    --input: 0 0% 100% / 0.05;
     --ring: 186 100% 29%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
-    /* Timer-specific colors */
     --timer-green: 142 71% 45%;
     --timer-yellow: 38 92% 50%;
     --timer-red: 0 84% 60%;
-    --timer-neutral: 210 17% 98%;
+    --timer-neutral: 240 10% 14%;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 240 12% 8%;
+    --sidebar-foreground: 40 20% 92%;
+    --sidebar-primary: 186 100% 29%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 10% 14%;
+    --sidebar-accent-foreground: 40 20% 92%;
+    --sidebar-border: 0 0% 100% / 0.05;
+    --sidebar-ring: 186 100% 29%;
 
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .dark {
-    --background: 210 30% 8%;
-    --foreground: 210 17% 95%;
-
-    --card: 210 25% 12%;
-    --card-foreground: 210 17% 95%;
-
-    --popover: 210 25% 12%;
-    --popover-foreground: 210 17% 95%;
-
-    --primary: 186 100% 42%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 210 25% 16%;
-    --secondary-foreground: 210 17% 95%;
-
-    --muted: 210 25% 16%;
-    --muted-foreground: 210 9% 55%;
-
-    --accent: 186 100% 42%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 62% 50%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 210 25% 20%;
-    --input: 210 25% 20%;
-    --ring: 186 100% 42%;
-
-    --timer-green: 142 71% 45%;
-    --timer-yellow: 38 92% 50%;
-    --timer-red: 0 84% 60%;
-    --timer-neutral: 210 25% 16%;
-
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
@@ -113,5 +64,22 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Syne', sans-serif;
+  }
+
+  .font-mono {
+    font-family: 'DM Mono', monospace !important;
+  }
+
+  #root::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px 256px;
   }
 }

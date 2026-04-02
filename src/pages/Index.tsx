@@ -156,7 +156,7 @@ const Index = () => {
 
   return (
     <div className="flex h-[100dvh] flex-col overflow-hidden">
-      <header className="border-b bg-card/80 backdrop-blur-sm shrink-0">
+      <header className="border-b border-[#ffffff0d] bg-card/80 backdrop-blur-sm shrink-0">
         <div className="container mx-auto flex items-center justify-between px-4 py-3">
           <div className="text-sm font-semibold tracking-tight">
             Speech Timer
@@ -174,7 +174,7 @@ const Index = () => {
         {renderContent()}
       </main>
 
-      <footer className="border-t bg-card/80 backdrop-blur-sm px-4 py-3 text-center text-xs text-muted-foreground shrink-0">
+      <footer className="border-t border-[#ffffff0d] bg-card/80 backdrop-blur-sm px-4 py-3 text-center text-xs text-muted-foreground shrink-0">
         Created by{" "}
         <a
           href="https://www.linkedin.com/in/arunprakashmr/"
