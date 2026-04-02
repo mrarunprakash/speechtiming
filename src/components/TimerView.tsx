@@ -198,23 +198,27 @@ export const TimerView = ({
         <div className="w-10" />
       </div>
 
-      {/* Speaker Info */}
-      <div className="px-6 py-4 bg-background/80 backdrop-blur-sm">
-        <h1 className="text-2xl font-bold text-center mb-1">{speaker.name}</h1>
-        <p className="text-center text-muted-foreground">
-          {getSpeechTypeLabel(speaker.speechType)} •{" "}
-          {formatTime(speaker.timingProfile.greenSeconds)}–
-          {formatTime(speaker.timingProfile.redSeconds)}
-        </p>
-      </div>
-
       {/* Timer Display */}
-      <div className="flex-1 flex flex-col items-center justify-center px-6">
-        <div className="text-center mb-8">
-          <div className="text-8xl md:text-9xl font-bold font-mono mb-4">
+      <div className="flex-1 flex flex-col items-center justify-center px-6 relative">
+        {/* Radial glow */}
+        <div
+          className="absolute inset-0 transition-all duration-[800ms] ease-in-out pointer-events-none"
+          style={{
+            background: `radial-gradient(circle at center, ${getGlowColor()}26 0%, transparent 70%)`,
+            filter: 'blur(80px)',
+          }}
+        />
+
+        {/* Speaker name */}
+        <h1 className="text-xs uppercase tracking-[0.25em] text-muted-foreground font-medium mb-2 relative z-10">
+          {speaker.name} • {getSpeechTypeLabel(speaker.speechType)} • {formatTime(speaker.timingProfile.greenSeconds)}–{formatTime(speaker.timingProfile.redSeconds)}
+        </h1>
+
+        <div className="text-center relative z-10">
+          <div className="text-[28vw] md:text-[18vw] font-bold font-mono leading-none">
             {formatTime(seconds)}
           </div>
-          <div className="text-3xl font-bold tracking-wider">
+          <div className="text-sm uppercase tracking-[0.2em] text-muted-foreground mt-2">
             {getColorLabel()}
           </div>
         </div>
