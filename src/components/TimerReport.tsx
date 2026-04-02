@@ -254,7 +254,7 @@ export const TimerReport = ({
                       </p>
                     </div>
                   </div>
-                  <div className="bg-muted rounded-lg p-3 space-y-2">
+                  <div className="bg-[#ffffff08] rounded-2xl p-3 space-y-2">
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-muted-foreground">
                         Target Time:
