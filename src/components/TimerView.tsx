@@ -163,6 +163,13 @@ export const TimerView = ({
     }
   };
 
+  const getGlowColor = () => {
+    if (seconds >= speaker.timingProfile.redSeconds) return "#ef4444";
+    if (seconds >= speaker.timingProfile.yellowSeconds) return "#eab308";
+    if (seconds >= speaker.timingProfile.greenSeconds) return "#22c55e";
+    return "transparent";
+  };
+
   return (
     <div
       className={cn(
@@ -191,23 +198,27 @@ export const TimerView = ({
         <div className="w-10" />
       </div>
 
-      {/* Speaker Info */}
-      <div className="px-6 py-4 bg-background/80 backdrop-blur-sm">
-        <h1 className="text-2xl font-bold text-center mb-1">{speaker.name}</h1>
-        <p className="text-center text-muted-foreground">
-          {getSpeechTypeLabel(speaker.speechType)} •{" "}
-          {formatTime(speaker.timingProfile.greenSeconds)}–
-          {formatTime(speaker.timingProfile.redSeconds)}
-        </p>
-      </div>
-
       {/* Timer Display */}
-      <div className="flex-1 flex flex-col items-center justify-center px-6">
-        <div className="text-center mb-8">
-          <div className="text-8xl md:text-9xl font-bold font-mono mb-4">
+      <div className="flex-1 flex flex-col items-center justify-center px-6 relative">
+        {/* Radial glow */}
+        <div
+          className="absolute inset-0 transition-all duration-[800ms] ease-in-out pointer-events-none"
+          style={{
+            background: `radial-gradient(circle at center, ${getGlowColor()}26 0%, transparent 70%)`,
+            filter: 'blur(80px)',
+          }}
+        />
+
+        {/* Speaker name */}
+        <h1 className="text-xs uppercase tracking-[0.25em] text-muted-foreground font-medium mb-2 relative z-10">
+          {speaker.name} • {getSpeechTypeLabel(speaker.speechType)} • {formatTime(speaker.timingProfile.greenSeconds)}–{formatTime(speaker.timingProfile.redSeconds)}
+        </h1>
+
+        <div className="text-center relative z-10">
+          <div className="text-[28vw] md:text-[18vw] font-bold font-mono leading-none">
             {formatTime(seconds)}
           </div>
-          <div className="text-3xl font-bold tracking-wider">
+          <div className="text-sm uppercase tracking-[0.2em] text-muted-foreground mt-2">
             {getColorLabel()}
           </div>
         </div>
@@ -256,11 +267,10 @@ export const TimerView = ({
       </div>
 
       {/* Controls */}
-      <div className="p-6 space-y-3 bg-background/80 backdrop-blur-sm">
+      <div className="p-6 flex flex-col items-center gap-3 bg-background/80 backdrop-blur-sm">
         {!isRunning && !isPaused && !isStopped && (
-          <Button onClick={handleStart} className="w-full h-16 text-xl animate-fade-in" size="lg">
-            <Play className="w-6 h-6 mr-2" />
-            Start
+          <Button onClick={handleStart} className="w-[72px] h-[72px] rounded-full p-0 animate-fade-in" size="lg">
+            <Play className="w-7 h-7" />
           </Button>
         )}
 
@@ -268,28 +278,25 @@ export const TimerView = ({
           <Button
             onClick={handlePause}
             variant="secondary"
-            className="w-full h-16 text-xl animate-fade-in"
+            className="w-[72px] h-[72px] rounded-full p-0 animate-fade-in"
             size="lg"
           >
-            <Pause className="w-6 h-6 mr-2" />
-            Pause
+            <Pause className="w-7 h-7" />
           </Button>
         )}
 
         {isPaused && (
-          <div className="space-y-3 animate-fade-in">
-            <Button onClick={handleResume} className="w-full h-16 text-xl" size="lg">
-              <Play className="w-6 h-6 mr-2" />
-              Resume
+          <div className="flex flex-col items-center gap-3 animate-fade-in">
+            <Button onClick={handleResume} className="w-[72px] h-[72px] rounded-full p-0" size="lg">
+              <Play className="w-7 h-7" />
             </Button>
             <Button
               onClick={handleStop}
               variant="destructive"
-              className="w-full h-16 text-xl"
+              className="w-[72px] h-[72px] rounded-full p-0"
               size="lg"
             >
-              <Square className="w-6 h-6 mr-2" />
-              Stop Timing
+              <Square className="w-7 h-7" />
             </Button>
           </div>
         )}
@@ -297,7 +304,7 @@ export const TimerView = ({
         {isStopped && (
           <Button
             onClick={handleSaveAndNext}
-            className="w-full h-16 text-xl animate-fade-in"
+            className="w-full h-14 text-lg animate-fade-in rounded-2xl"
             size="lg"
           >
             {speakerNumber === totalSpeakers
@@ -310,7 +317,7 @@ export const TimerView = ({
           <Button
             onClick={handleReset}
             variant="outline"
-            className="w-full h-12 animate-fade-in"
+            className="w-full h-11 animate-fade-in rounded-2xl"
           >
             <RotateCcw className="w-4 h-4 mr-2" />
             Reset
@@ -321,7 +328,7 @@ export const TimerView = ({
           <Button
             onClick={handleReset}
             variant="outline"
-            className="w-full h-12"
+            className="w-full h-11 rounded-2xl"
             disabled={seconds === 0}
           >
             <RotateCcw className="w-4 h-4 mr-2" />
