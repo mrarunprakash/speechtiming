@@ -280,7 +280,7 @@ export const TimerReport = ({
         <div className="max-w-2xl mx-auto space-y-3">
           <Button
             onClick={handleGeneratePDF}
-            className="w-full h-14 text-lg"
+            className="w-full h-14 text-lg rounded-full"
             size="lg"
           >
             {generated ? (
