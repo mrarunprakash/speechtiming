@@ -213,7 +213,7 @@ export const TimerView = ({
         </div>
 
         {isStopped && (
-          <div className="bg-background/90 backdrop-blur-sm rounded-lg p-6 text-center max-w-md animate-scale-in">
+          <div className="bg-[#ffffff08] backdrop-blur-sm rounded-2xl p-6 text-center max-w-md animate-scale-in">
             <p className="text-lg font-semibold mb-2">Recorded Time</p>
             <p className="text-4xl font-mono font-bold mb-4">
               {formatTime(seconds)}

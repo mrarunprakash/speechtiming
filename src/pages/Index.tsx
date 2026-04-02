@@ -174,7 +174,7 @@ const Index = () => {
         {renderContent()}
       </main>
 
-      <footer className="border-t bg-card/80 backdrop-blur-sm px-4 py-3 text-center text-xs text-muted-foreground shrink-0">
+      <footer className="border-t border-[#ffffff0d] bg-card/80 backdrop-blur-sm px-4 py-3 text-center text-xs text-muted-foreground shrink-0">
         Created by{" "}
         <a
           href="https://www.linkedin.com/in/arunprakashmr/"

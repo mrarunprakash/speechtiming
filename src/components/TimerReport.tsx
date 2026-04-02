@@ -296,7 +296,7 @@ export const TimerReport = ({
         </div>
       </div>
 
-      <div className="shrink-0 p-4 bg-background border-t space-y-3">
+      <div className="shrink-0 p-4 bg-background border-t border-[#ffffff0d] space-y-3">
         <div className="max-w-2xl mx-auto space-y-3">
           <Button
             onClick={handleGeneratePDF}

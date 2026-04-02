@@ -7,7 +7,7 @@ const FAQ = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b bg-card/80 backdrop-blur-sm">
+      <header className="border-b border-[#ffffff0d] bg-card/80 backdrop-blur-sm">
         <div className="container mx-auto flex items-center justify-between px-4 py-3">
           <Button
             variant="ghost"

@@ -323,7 +323,7 @@ export const SpeakersList = ({
         </div>
       </div>
 
-      <div className="shrink-0 p-4 bg-background border-t">
+      <div className="shrink-0 p-4 bg-background border-t border-[#ffffff0d]">
         <div className="max-w-2xl mx-auto">
           <Button
             onClick={onStartTiming}

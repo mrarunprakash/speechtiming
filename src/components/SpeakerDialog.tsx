@@ -144,7 +144,7 @@ export const SpeakerDialog = ({
             </Select>
           </div>
 
-          <div className="bg-muted rounded-lg p-4 space-y-2">
+          <div className="bg-[#ffffff08] rounded-2xl p-4 space-y-2">
             <p className="text-sm font-medium">Timing Profile</p>
             <div className="grid grid-cols-2 gap-2 text-sm">
               <div>
