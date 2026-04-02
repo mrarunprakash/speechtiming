@@ -50,6 +50,10 @@ const Index = () => {
     });
   };
 
+  const handleReorderSpeakers = (reordered: Speaker[]) => {
+    if (!meeting) return;
+    setMeeting({ ...meeting, speakers: reordered });
+
   const handleStartTiming = () => {
     // If there's a paused speaker, resume from them; otherwise start from 0
     const pausedIndex = Object.keys(pausedTimers).map(Number).sort((a, b) => a - b)[0];
