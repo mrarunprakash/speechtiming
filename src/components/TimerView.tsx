@@ -163,6 +163,13 @@ export const TimerView = ({
     }
   };
 
+  const getGlowColor = () => {
+    if (seconds >= speaker.timingProfile.redSeconds) return "#ef4444";
+    if (seconds >= speaker.timingProfile.yellowSeconds) return "#eab308";
+    if (seconds >= speaker.timingProfile.greenSeconds) return "#22c55e";
+    return "transparent";
+  };
+
   return (
     <div
       className={cn(
