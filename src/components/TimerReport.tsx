@@ -215,83 +215,63 @@ export const TimerReport = ({
           </Card>
 
           {(() => {
-            const counts = { WITHIN: 0, UNDER: 0, OVER: 0, DISQUALIFIED: 0 };
-            speakers.forEach((s) => s.status && counts[s.status]++);
-            const chips = [
-              { key: "WITHIN", label: "On Time", cls: "bg-green-500/15 text-green-400 border-green-500/30" },
-              { key: "UNDER", label: "Under Time", cls: "bg-yellow-500/15 text-yellow-400 border-yellow-500/30" },
-              { key: "OVER", label: "Over Time", cls: "bg-orange-500/15 text-orange-400 border-orange-500/30" },
-              { key: "DISQUALIFIED", label: "Disqualified", cls: "bg-red-500/15 text-red-400 border-red-500/30" },
-            ];
+            const totalTime = speakers.reduce((sum, s) => sum + (s.actualSeconds || 0), 0);
+            const withinCount = speakers.filter(s => s.status === "WITHIN").length;
+            const onTimePct = speakers.length > 0 ? Math.round((withinCount / speakers.length) * 100) : 0;
             return (
-              <Card>
-                <CardContent className="p-4">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Badge variant="outline" className="font-medium">{speakers.length} Speaker{speakers.length !== 1 ? "s" : ""}</Badge>
-                    {chips.map(({ key, label, cls }) => counts[key as keyof typeof counts] > 0 && (
-                      <Badge key={key} className={`border ${cls}`}>{counts[key as keyof typeof counts]} {label}</Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+              <div className="flex justify-around items-start py-4">
+                <div className="flex flex-col items-center">
+                  <span className="font-mono text-3xl font-bold">{speakers.length}</span>
+                  <span className="text-xs uppercase tracking-widest text-muted-foreground mt-1">Speakers</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <span className="font-mono text-3xl font-bold">{formatTime(totalTime)}</span>
+                  <span className="text-xs uppercase tracking-widest text-muted-foreground mt-1">Total Time</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <span className="font-mono text-3xl font-bold">{onTimePct}%</span>
+                  <span className="text-xs uppercase tracking-widest text-muted-foreground mt-1">On Time</span>
+                </div>
+              </div>
             );
           })()}
 
-          <div className="space-y-3">
-            {speakers.map((speaker, index) => (
-              <Card key={speaker.id} className={getStatusColors(speaker.status).border}>
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between gap-3 mb-2">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Badge variant="outline" className="font-mono">
-                          #{index + 1}
-                        </Badge>
-                        <h3 className="font-semibold text-lg">{speaker.name}</h3>
-                      </div>
-                      <p className="text-sm text-muted-foreground">
+          <div className="space-y-0">
+            {speakers.map((speaker, index) => {
+              const borderColor = speaker.status === "WITHIN" ? "border-l-green-500"
+                : speaker.status === "UNDER" ? "border-l-amber-500"
+                : speaker.status === "OVER" || speaker.status === "DISQUALIFIED" ? "border-l-red-500"
+                : "border-l-transparent";
+              const rowBg = index % 2 === 0 ? "bg-[#ffffff04]" : "bg-transparent";
+              return (
+                <div key={speaker.id}>
+                  <div className={`border-l-[3px] ${borderColor} ${rowBg} px-4 py-3 flex items-center gap-3`}>
+                    <div className="flex-1 text-left">
+                      <h3 className="text-lg font-bold">{speaker.name}</h3>
+                    </div>
+                    <div className="flex-1 text-center">
+                      <span className="text-xs uppercase tracking-widest text-muted-foreground">
                         {getSpeechTypeLabel(speaker.speechType)}
-                      </p>
+                      </span>
+                    </div>
+                    <div className="flex-1 text-right">
+                      <span className={`font-mono text-xl font-bold ${getStatusColors(speaker.status).text}`}>
+                        {speaker.actualSeconds ? formatTime(speaker.actualSeconds) : "–"}
+                      </span>
                     </div>
                   </div>
-                  <div className="bg-[#ffffff08] rounded-2xl p-3 space-y-2">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">
-                        Target Time:
-                      </span>
-                      <span className="font-mono font-medium">
-                        {formatTime(speaker.timingProfile.greenSeconds)}–
-                        {formatTime(speaker.timingProfile.redSeconds)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">
-                        Actual Time:
-                      </span>
-                      <div className="flex items-center">
-                        <span className={`font-mono font-bold text-lg ${getStatusColors(speaker.status).text}`}>
-                          {speaker.actualSeconds
-                            ? formatTime(speaker.actualSeconds)
-                            : "–"}
-                        </span>
-                        {getStatusBadge(speaker.status)}
-                      </div>
-                    </div>
-                    {speaker.status === "DISQUALIFIED" && (
-                      <p className="text-sm text-destructive font-medium pt-1">
+                  {speaker.status === "DISQUALIFIED" && (
+                    <div className={`${rowBg} px-4 pb-2 ml-[3px] border-l-[3px] border-l-red-500`}>
+                      <p className="text-sm text-destructive font-medium">
                         {speaker.actualSeconds && speaker.actualSeconds < speaker.timingProfile.minSeconds
-                          ? `Finished ${formatTime(
-                              speaker.timingProfile.minSeconds - speaker.actualSeconds
-                            )} too early (min: ${formatTime(speaker.timingProfile.minSeconds)})`
-                          : speaker.actualSeconds && `Exceeded max time by ${formatTime(
-                              speaker.actualSeconds - speaker.timingProfile.redBlinkSeconds
-                            )} (max: ${formatTime(speaker.timingProfile.redBlinkSeconds)})`}
+                          ? `Finished ${formatTime(speaker.timingProfile.minSeconds - speaker.actualSeconds)} too early (min: ${formatTime(speaker.timingProfile.minSeconds)})`
+                          : speaker.actualSeconds && `Exceeded max time by ${formatTime(speaker.actualSeconds - speaker.timingProfile.redBlinkSeconds)} (max: ${formatTime(speaker.timingProfile.redBlinkSeconds)})`}
                       </p>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
