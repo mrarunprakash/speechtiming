@@ -170,7 +170,7 @@ export const SpeakersList = ({
             className="w-full h-14 text-lg font-semibold"
             size="lg"
           >
-            Start Timing ({speakers.length} {speakers.length === 1 ? "speaker" : "speakers"})
+            {Object.keys(pausedTimers).length > 0 ? "Resume" : "Start"} Timing ({speakers.length} {speakers.length === 1 ? "speaker" : "speakers"})
           </Button>
         </div>
       </div>
