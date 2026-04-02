@@ -1,91 +1,40 @@
 
 
-## Plan: Visual Restyling of Speech Timer App
+## Plan: Restyle Timer Display Component
 
-Pure CSS/visual changes only. No logic, state, routing, or handlers touched.
+Visual-only changes to `src/components/TimerView.tsx`. Zero logic changes.
 
-### 1. Google Fonts (`index.html`)
-Add Syne and DM Mono font imports in `<head>`:
-```html
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-```
+### Changes
 
-### 2. CSS Variables & Base Styles (`src/index.css`)
+**1. Timer digits** (line 207)
+- Scale to `text-[28vw] md:text-[18vw]` with `font-mono` (already maps to DM Mono)
+- Remove `mb-4` spacing, let digits breathe
 
-**Light and dark root variables** — replace both `:root` and `.dark` with a single dark-only palette:
-- `--background`: deep charcoal `#0e0e12` (converted to HSL ~240 12% 6%)
-- `--foreground`: warm off-white `#f0ede6` (HSL ~40 20% 92%)
-- `--card`: `#ffffff08` equivalent (very subtle white on dark)
-- `--border`: transparent / `#ffffff0d`
-- `--primary` / `--accent`: keep existing teal/cyan hue
-- `--muted` / `--secondary`: dark tones matching charcoal
+**2. Radial glow behind digits** (new wrapper around timer area, ~line 205)
+- Add a `div` with absolute-positioned radial gradient glow
+- Color derived from current status: green (`#22c55e`), yellow (`#eab308`), red (`#ef4444`), neutral (transparent)
+- CSS: `radial-gradient(circle, {color}26 0%, transparent 70%)` with `blur-[80px]` or inline `filter`
+- Apply `transition-all duration-[800ms] ease-in-out` for smooth color transitions
+- Helper function `getGlowColor()` returns the color string based on same timing thresholds (no new logic — reuses existing second/threshold comparisons)
 
-**Noise grain overlay** — add a pseudo-element on `#root`:
-```css
-#root::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  pointer-events: none;
-  opacity: 0.025;
-  background-image: url("data:image/svg+xml,..."); /* noise SVG pattern */
-}
-```
+**3. Speaker name** (line 196)
+- Restyle from `text-2xl font-bold` to `text-xs uppercase tracking-[0.25em] text-muted-foreground font-medium`
+- Position stays above timer (already is)
 
-**Global font families:**
-- `font-family: 'Syne', sans-serif` on body
-- `.font-mono` override to `'DM Mono', monospace`
+**4. Color label** (line 210-212)
+- Keep text but make it smaller/subtler since the glow now conveys status: `text-sm uppercase tracking-[0.2em] text-muted-foreground`
 
-**Global shadow override:**
-```css
-* { --tw-shadow: 0 0 0 1px rgba(255,255,255,0.05) !important; }
-```
+**5. Speaker info bar** (lines 195-202)
+- Remove `bg-background/80 backdrop-blur-sm` wrapper — merge speaker name into the main timer area so digits sit directly on the status background
 
-### 3. Tailwind Config (`tailwind.config.ts`)
+**6. Control buttons** (lines 258-331)
+- Start/Pause/Resume/Stop buttons: change from `w-full h-16` rectangles to centered circular pills: `w-[72px] h-[72px] rounded-full p-0 mx-auto` with icon only (remove text labels like "Start", "Pause")
+- Secondary buttons (Reset, Continue, Generate Report): keep as full-width but smaller
+- Wrap controls in `flex flex-col items-center` instead of `space-y-3`
 
-- Add `fontFamily` extend: `sans: ['Syne', ...], mono: ['DM Mono', ...]`
-- Update `borderRadius` — set `lg` to `1rem`, `md` to `0.875rem`, `sm` to `0.75rem` (minimum `rounded-2xl` feel)
+**7. Stopped overlay card** (lines 216-254)
+- Keep as-is (already styled with `bg-[#ffffff08] rounded-2xl`)
 
-### 4. Card Component (`src/components/ui/card.tsx`)
-
-Replace default card classes:
-- Remove: `border bg-card shadow-sm`
-- Add: `bg-[#ffffff08] rounded-2xl shadow-[0_0_0_1px_rgba(255,255,255,0.05)]`
-
-### 5. Component-Level Tweaks (class-only changes)
-
-**All components** — anywhere `rounded-lg` appears, upgrade to `rounded-2xl`. Anywhere `border` or `border-t` / `border-b` is used for decorative purposes, replace with `border-[#ffffff0d]` or remove.
-
-**`Index.tsx`** header/footer: change `border-b` / `border-t` to `border-b border-[#ffffff0d]` and `bg-card/80` stays as-is (will inherit new card color).
-
-**`SpeakersList.tsx`** bottom bar: `border-t` becomes `border-t border-[#ffffff0d]`.
-
-**`TimerView.tsx`** stopped overlay: `bg-background/90 rounded-lg` becomes `bg-[#ffffff08] rounded-2xl`.
-
-**`TimerReport.tsx`** summary badges: the colored `bg-green-100 text-green-800` chips adjusted to darker variants (`bg-green-500/15 text-green-400` etc.) to work on dark background.
-
-**`SpeakerDialog.tsx`** / dialog: `bg-muted rounded-lg` becomes `bg-[#ffffff08] rounded-2xl`.
-
-**`FAQ.tsx`**: `min-h-screen bg-background` unchanged (inherits new background).
-
-### 6. Input & Button styles (`src/components/ui/input.tsx`, `button.tsx`)
-
-- Input: add `rounded-2xl` and `bg-[#ffffff08] border-[#ffffff0d]`
-- Button primary: ensure `rounded-2xl`
-
-### Files Changed
-- `index.html` (font link)
-- `src/index.css` (variables, noise overlay, font families)
-- `tailwind.config.ts` (fonts, border-radius)
-- `src/components/ui/card.tsx` (card base classes)
-- `src/components/ui/input.tsx` (rounded + bg)
-- `src/pages/Index.tsx` (border colors)
-- `src/components/SpeakersList.tsx` (border colors)
-- `src/components/TimerView.tsx` (rounded, bg tweaks)
-- `src/components/TimerReport.tsx` (dark-friendly badge colors)
-- `src/components/SpeakerDialog.tsx` (rounded, bg tweaks)
-- `src/pages/FAQ.tsx` (border color)
-
-No logic, state, handlers, or routing changes.
+### File changed
+- `src/components/TimerView.tsx` only (~30 lines modified)
 
