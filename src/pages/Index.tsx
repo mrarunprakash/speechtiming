@@ -116,6 +116,7 @@ const Index = () => {
           onAddSpeaker={handleAddSpeaker}
           onEditSpeaker={handleEditSpeaker}
           onDeleteSpeaker={handleDeleteSpeaker}
+          onReorderSpeakers={handleReorderSpeakers}
           onStartTiming={handleStartTiming}
           pausedTimers={pausedTimers}
         />
