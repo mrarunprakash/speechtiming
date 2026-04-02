@@ -251,8 +251,10 @@ export const SpeakersList = ({
                   }`}
                   style={{ touchAction: "pan-x" }}
                 >
-                  <Card className={`hover:shadow-md transition-shadow ${
-                    dragIndex === index ? "opacity-40" : ""
+                  <Card className={`transition-all duration-200 ${
+                    dragIndex === index ? "animate-card-pickup opacity-40" :
+                    droppedIndex === index ? "animate-card-drop" :
+                    "hover:shadow-md"
                   }`}>
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between gap-3">
