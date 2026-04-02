@@ -79,6 +79,11 @@ export const SpeakersList = ({
     setDragOverIndex(index);
   };
 
+  const triggerDropAnimation = (targetIndex: number) => {
+    setDroppedIndex(targetIndex);
+    setTimeout(() => setDroppedIndex(null), 300);
+  };
+
   const handleDragEnd = () => {
     if (dragNodeRef.current) dragNodeRef.current.style.opacity = "1";
     if (dragIndex !== null && dragOverIndex !== null && dragIndex !== dragOverIndex) {
@@ -86,6 +91,7 @@ export const SpeakersList = ({
       const [moved] = reordered.splice(dragIndex, 1);
       reordered.splice(dragOverIndex, 0, moved);
       onReorderSpeakers(reordered);
+      triggerDropAnimation(dragOverIndex);
     }
     setDragIndex(null);
     setDragOverIndex(null);
