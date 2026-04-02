@@ -53,6 +53,7 @@ const Index = () => {
   const handleReorderSpeakers = (reordered: Speaker[]) => {
     if (!meeting) return;
     setMeeting({ ...meeting, speakers: reordered });
+  };
 
   const handleStartTiming = () => {
     // If there's a paused speaker, resume from them; otherwise start from 0
