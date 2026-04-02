@@ -218,10 +218,10 @@ export const TimerReport = ({
             const counts = { WITHIN: 0, UNDER: 0, OVER: 0, DISQUALIFIED: 0 };
             speakers.forEach((s) => s.status && counts[s.status]++);
             const chips = [
-              { key: "WITHIN", label: "On Time", cls: "bg-green-100 text-green-800 border-green-300" },
-              { key: "UNDER", label: "Under Time", cls: "bg-yellow-100 text-yellow-800 border-yellow-300" },
-              { key: "OVER", label: "Over Time", cls: "bg-orange-100 text-orange-800 border-orange-300" },
-              { key: "DISQUALIFIED", label: "Disqualified", cls: "bg-red-100 text-red-800 border-red-300" },
+              { key: "WITHIN", label: "On Time", cls: "bg-green-500/15 text-green-400 border-green-500/30" },
+              { key: "UNDER", label: "Under Time", cls: "bg-yellow-500/15 text-yellow-400 border-yellow-500/30" },
+              { key: "OVER", label: "Over Time", cls: "bg-orange-500/15 text-orange-400 border-orange-500/30" },
+              { key: "DISQUALIFIED", label: "Disqualified", cls: "bg-red-500/15 text-red-400 border-red-500/30" },
             ];
             return (
               <Card>
