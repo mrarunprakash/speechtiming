@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -33,6 +33,13 @@ export const SpeakersList = ({
   const [editingSpeaker, setEditingSpeaker] = useState<Speaker | null>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+
+  // Touch drag state
+  const touchDragIndex = useRef<number | null>(null);
+  const touchStartY = useRef(0);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const listRef = useRef<HTMLDivElement | null>(null);
+  const dragCloneRef = useRef<HTMLDivElement | null>(null);
   const dragNodeRef = useRef<HTMLDivElement | null>(null);
 
   const handleAddClick = () => {
@@ -54,15 +61,13 @@ export const SpeakersList = ({
     setDialogOpen(false);
   };
 
+  // HTML5 drag (desktop)
   const handleDragStart = (index: number, e: React.DragEvent<HTMLDivElement>) => {
     setDragIndex(index);
     dragNodeRef.current = e.currentTarget;
     e.dataTransfer.effectAllowed = "move";
-    // Make drag image slightly transparent
     requestAnimationFrame(() => {
-      if (dragNodeRef.current) {
-        dragNodeRef.current.style.opacity = "0.4";
-      }
+      if (dragNodeRef.current) dragNodeRef.current.style.opacity = "0.4";
     });
   };
 
@@ -74,9 +79,7 @@ export const SpeakersList = ({
   };
 
   const handleDragEnd = () => {
-    if (dragNodeRef.current) {
-      dragNodeRef.current.style.opacity = "1";
-    }
+    if (dragNodeRef.current) dragNodeRef.current.style.opacity = "1";
     if (dragIndex !== null && dragOverIndex !== null && dragIndex !== dragOverIndex) {
       const reordered = [...speakers];
       const [moved] = reordered.splice(dragIndex, 1);
@@ -88,16 +91,99 @@ export const SpeakersList = ({
     dragNodeRef.current = null;
   };
 
+  // Touch drag (mobile)
+  const getDropIndex = useCallback((touchY: number) => {
+    for (let i = 0; i < cardRefs.current.length; i++) {
+      const el = cardRefs.current[i];
+      if (!el) continue;
+      const rect = el.getBoundingClientRect();
+      const midY = rect.top + rect.height / 2;
+      if (touchY < midY) return i;
+    }
+    return cardRefs.current.length - 1;
+  }, []);
+
+  const handleTouchStart = (index: number, e: React.TouchEvent<HTMLDivElement>) => {
+    // Only start drag from the grip handle area
+    const target = e.target as HTMLElement;
+    if (!target.closest('[data-grip]')) return;
+
+    e.preventDefault();
+    touchDragIndex.current = index;
+    touchStartY.current = e.touches[0].clientY;
+    setDragIndex(index);
+
+    // Create a visual clone
+    const card = cardRefs.current[index];
+    if (card) {
+      const rect = card.getBoundingClientRect();
+      const clone = card.cloneNode(true) as HTMLDivElement;
+      clone.style.position = "fixed";
+      clone.style.left = `${rect.left}px`;
+      clone.style.top = `${rect.top}px`;
+      clone.style.width = `${rect.width}px`;
+      clone.style.zIndex = "9999";
+      clone.style.opacity = "0.9";
+      clone.style.pointerEvents = "none";
+      clone.style.boxShadow = "0 8px 32px rgba(0,0,0,0.18)";
+      clone.style.borderRadius = "8px";
+      clone.style.transition = "none";
+      document.body.appendChild(clone);
+      dragCloneRef.current = clone;
+    }
+  };
+
+  const handleTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    if (touchDragIndex.current === null) return;
+    e.preventDefault();
+
+    const touchY = e.touches[0].clientY;
+    const dy = touchY - touchStartY.current;
+
+    // Move clone
+    if (dragCloneRef.current) {
+      const card = cardRefs.current[touchDragIndex.current];
+      if (card) {
+        const rect = card.getBoundingClientRect();
+        dragCloneRef.current.style.top = `${rect.top + dy}px`;
+      }
+    }
+
+    const overIdx = getDropIndex(touchY);
+    if (overIdx !== touchDragIndex.current) {
+      setDragOverIndex(overIdx);
+    } else {
+      setDragOverIndex(null);
+    }
+  }, [getDropIndex]);
+
+  const handleTouchEnd = useCallback(() => {
+    if (dragCloneRef.current) {
+      dragCloneRef.current.remove();
+      dragCloneRef.current = null;
+    }
+
+    const from = touchDragIndex.current;
+    const to = dragOverIndex;
+
+    if (from !== null && to !== null && from !== to) {
+      const reordered = [...speakers];
+      const [moved] = reordered.splice(from, 1);
+      reordered.splice(to, 0, moved);
+      onReorderSpeakers(reordered);
+    }
+
+    touchDragIndex.current = null;
+    setDragIndex(null);
+    setDragOverIndex(null);
+  }, [speakers, dragOverIndex, onReorderSpeakers]);
+
   const getSpeechTypeLabel = (type: string) => {
     switch (type) {
-      case "PREPARED":
-        return "Prepared Speech";
-      case "TABLE_TOPIC":
-        return "Table Topics";
-      case "EVALUATION":
-        return "Evaluation";
-      default:
-        return "Custom";
+      case "PREPARED": return "Prepared Speech";
+      case "TABLE_TOPIC": return "Table Topics";
+      case "EVALUATION": return "Evaluation";
+      default: return "Custom";
     }
   };
 
@@ -127,7 +213,7 @@ export const SpeakersList = ({
             </CardHeader>
           </Card>
 
-          <div className="space-y-3">
+          <div className="space-y-3" ref={listRef}>
             {speakers.length === 0 ? (
               <Card className="border-dashed">
                 <CardContent className="flex flex-col items-center justify-center py-12 text-center">
@@ -142,22 +228,30 @@ export const SpeakersList = ({
               speakers.map((speaker, index) => (
                 <div
                   key={speaker.id}
+                  ref={(el) => { cardRefs.current[index] = el; }}
                   draggable
                   onDragStart={(e) => handleDragStart(index, e)}
                   onDragOver={(e) => handleDragOver(index, e)}
                   onDragEnd={handleDragEnd}
+                  onTouchStart={(e) => handleTouchStart(index, e)}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}
                   className={`transition-all duration-200 ${
                     dragOverIndex === index && dragIndex !== index
                       ? "border-t-2 border-primary pt-1"
                       : ""
                   }`}
+                  style={{ touchAction: "pan-x" }}
                 >
                   <Card className={`hover:shadow-md transition-shadow ${
                     dragIndex === index ? "opacity-40" : ""
                   }`}>
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-center cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground shrink-0 pt-1">
+                        <div
+                          data-grip
+                          className="flex items-center cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground shrink-0 pt-1 select-none"
+                        >
                           <GripVertical className="w-5 h-5" />
                         </div>
                         <div className="flex-1 min-w-0">
