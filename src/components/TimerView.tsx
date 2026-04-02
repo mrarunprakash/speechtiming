@@ -40,8 +40,8 @@ export const TimerView = ({
   const [isBlink, setIsBlink] = useState(false);
   const [showBackDialog, setShowBackDialog] = useState(false);
   const wasRunningRef = useRef(false);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const blinkIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const blinkIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     if (isRunning) {
