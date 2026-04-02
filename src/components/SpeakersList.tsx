@@ -33,6 +33,7 @@ export const SpeakersList = ({
   const [editingSpeaker, setEditingSpeaker] = useState<Speaker | null>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [droppedIndex, setDroppedIndex] = useState<number | null>(null);
 
   // Touch drag state
   const touchDragIndex = useRef<number | null>(null);
