@@ -267,11 +267,10 @@ export const TimerView = ({
       </div>
 
       {/* Controls */}
-      <div className="p-6 space-y-3 bg-background/80 backdrop-blur-sm">
+      <div className="p-6 flex flex-col items-center gap-3 bg-background/80 backdrop-blur-sm">
         {!isRunning && !isPaused && !isStopped && (
-          <Button onClick={handleStart} className="w-full h-16 text-xl animate-fade-in" size="lg">
-            <Play className="w-6 h-6 mr-2" />
-            Start
+          <Button onClick={handleStart} className="w-[72px] h-[72px] rounded-full p-0 animate-fade-in" size="lg">
+            <Play className="w-7 h-7" />
           </Button>
         )}
 
@@ -279,28 +278,25 @@ export const TimerView = ({
           <Button
             onClick={handlePause}
             variant="secondary"
-            className="w-full h-16 text-xl animate-fade-in"
+            className="w-[72px] h-[72px] rounded-full p-0 animate-fade-in"
             size="lg"
           >
-            <Pause className="w-6 h-6 mr-2" />
-            Pause
+            <Pause className="w-7 h-7" />
           </Button>
         )}
 
         {isPaused && (
-          <div className="space-y-3 animate-fade-in">
-            <Button onClick={handleResume} className="w-full h-16 text-xl" size="lg">
-              <Play className="w-6 h-6 mr-2" />
-              Resume
+          <div className="flex flex-col items-center gap-3 animate-fade-in">
+            <Button onClick={handleResume} className="w-[72px] h-[72px] rounded-full p-0" size="lg">
+              <Play className="w-7 h-7" />
             </Button>
             <Button
               onClick={handleStop}
               variant="destructive"
-              className="w-full h-16 text-xl"
+              className="w-[72px] h-[72px] rounded-full p-0"
               size="lg"
             >
-              <Square className="w-6 h-6 mr-2" />
-              Stop Timing
+              <Square className="w-7 h-7" />
             </Button>
           </div>
         )}
@@ -308,7 +304,7 @@ export const TimerView = ({
         {isStopped && (
           <Button
             onClick={handleSaveAndNext}
-            className="w-full h-16 text-xl animate-fade-in"
+            className="w-full h-14 text-lg animate-fade-in rounded-2xl"
             size="lg"
           >
             {speakerNumber === totalSpeakers
@@ -321,7 +317,7 @@ export const TimerView = ({
           <Button
             onClick={handleReset}
             variant="outline"
-            className="w-full h-12 animate-fade-in"
+            className="w-full h-11 animate-fade-in rounded-2xl"
           >
             <RotateCcw className="w-4 h-4 mr-2" />
             Reset
@@ -332,7 +328,7 @@ export const TimerView = ({
           <Button
             onClick={handleReset}
             variant="outline"
-            className="w-full h-12"
+            className="w-full h-11 rounded-2xl"
             disabled={seconds === 0}
           >
             <RotateCcw className="w-4 h-4 mr-2" />
